@@ -59,7 +59,7 @@ Here are some example usage commands:
 * [ ]: Basic tools for managing tasks
   * [x]: Add tasks
   * [x]: List tasks
-  * [ ]: Ability to provide long-form details using (optionally, $EDITOR)
+  * [ ]: Ability to provide long-form details (optionally, using $EDITOR)
   * [ ]: Remove tasks (should we even do this?)
 * [ ]: Tagging tasks, projects, etc with arbitrary metadata
 * [ ]: Support GPG Signing of database entries with every update
