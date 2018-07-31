@@ -41,13 +41,7 @@ func main() {
 
 	arguments := flag.Args()
 
-	if len(arguments) == 0 {
-		fmt.Fprintf(os.Stderr, "No arguments were provided.\n\n")
-		flag.Usage()
-		os.Exit(1)
-	}
-
-	if arguments[0][:len(commandPrefix)] == commandPrefix {
+	if len(arguments) > 0 && arguments[0][:len(commandPrefix)] == commandPrefix {
 		commandString := strings.Join(arguments, " ")
 
 		for _, name := range getCommands() {
@@ -89,7 +83,11 @@ func main() {
 			truncateLength += deltaLength
 		}
 	} else {
-		command = "task add"
+		if len(arguments) == 0 {
+			command = "task list"
+		} else {
+			command = "task add"
+		}
 	}
 
 	registry.Execute(command, arguments)

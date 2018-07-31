@@ -41,9 +41,13 @@ func (registry *commandRegistry) Execute(command string, arguments []string) {
 func init() {
 	registry = newCommandRegistry()
 
+	// Commands for managing projects
 	registry.register("project list", projectListCommand)
 	registry.register("project add", projectAddCommand)
+
+	// Commands for managing tasks
 	registry.register("task add", taskAddCommand)
+	registry.register("task list", taskListCommand)
 
 	registry.register("help", func(_ ...string) { flag.Usage() })
 }

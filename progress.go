@@ -94,7 +94,7 @@ func (database *Database) ensureTasksTableExists() error {
 	return database.ensureTable("tasks", `
 		project_id   TEXT NOT NULL,
 		summary      TEXT NOT NULL,
-		description  TEXT,
+		details      TEXT,
 	`)
 }
 
@@ -276,6 +276,74 @@ func (database *Database) Project(reference string) (Project, error) {
 	}
 
 	return project, nil
+}
+
+// Tasks gets a list of recent Tasks related to the given project (if provided)
+func (database *Database) Tasks(project *Project) ([]Task, error) {
+	var tasks []Task
+	var arguments []interface{}
+
+	query := `
+		SELECT
+			p.id,
+			p.name,
+			p.abbreviation,
+
+			t.id,
+			t.summary,
+			t.details
+		FROM tasks AS t
+		LEFT JOIN projects AS p ON p.id = t.project_id
+	`
+
+	if project != nil {
+		query += " WHERE p.id = ? "
+		arguments = append(arguments, project.Identifier)
+	}
+
+	results, err := database.connection.Query(query + `
+		ORDER BY p.abbreviation, t.last_updated DESC
+		LIMIT 15
+	`)
+
+	if err != nil {
+		return nil, err
+	}
+
+	for results.Next() {
+		var task Task
+
+		task.Project = &Project{}
+
+		results.Scan(
+			&task.Project.Identifier,
+			&task.Project.Name,
+			&task.Project.Abbreviation,
+			&task.Identifier,
+			&task.Summary,
+			&task.Details,
+		)
+		tasks = append(tasks, task)
+	}
+
+	return tasks, nil
+}
+
+// CurrentTask gets the most recently updated task
+func (database *Database) CurrentTask(project *Project) (Task, error) {
+	var task Task
+
+	tasks, err := database.Tasks(project)
+
+	if err != nil {
+		return task, err
+	}
+
+	if len(tasks) == 0 {
+		return task, errors.New("no current task exists")
+	}
+
+	return tasks[0], nil
 }
 
 // AddTask adds a task to the provided project

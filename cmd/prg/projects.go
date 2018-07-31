@@ -87,6 +87,31 @@ func projectAddCommand(arguments ...string) {
 	}
 }
 
+func taskListCommand(arguments ...string) {
+	var project *progress.Project
+
+	if len(arguments) > 0 {
+		fmt.Fprintf(os.Stderr, "usage: @task list\n")
+		os.Exit(3)
+	}
+
+	tasks, err := getDatabase().Tasks(nil)
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Could not retreive task list: %v\n", err)
+		os.Exit(4)
+	}
+
+	for _, task := range tasks {
+		if project == nil || project.Identifier != task.Project.Identifier {
+			project = task.Project
+			fmt.Printf("%v:\n", project.Name)
+		}
+
+		fmt.Printf("- %v [%v]\n", task.Summary, task.Identifier)
+	}
+}
+
 func taskAddCommand(arguments ...string) {
 	var err error
 
@@ -95,6 +120,7 @@ func taskAddCommand(arguments ...string) {
 
 	if len(arguments) == 0 || len(arguments[0]) == 0 {
 		fmt.Fprintf(os.Stderr, "usage: @task add [~project] <>")
+		os.Exit(3)
 	}
 
 	database := getDatabase()
@@ -107,22 +133,22 @@ func taskAddCommand(arguments ...string) {
 
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Could not get project (%v): %v\n", projectRef, err)
-			os.Exit(2)
+			os.Exit(4)
 		}
 	} else {
 		project, err = database.DefaultProject()
 
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "%v\n", project.Abbreviation)
-			os.Exit(4)
+			os.Exit(5)
 		}
 	}
 
 	summary := strings.Join(arguments, " ")
-	fmt.Printf("Adding task for %v: %v\n", project.Name, summary)
+	fmt.Printf("Adding task to %v: %v\n", project.Name, summary)
 
 	if _, err = database.AddTask(project, summary); err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to create task: %v\n", err)
-		os.Exit(5)
+		os.Exit(6)
 	}
 }
