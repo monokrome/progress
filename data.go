@@ -27,6 +27,10 @@ func getDataHome() string {
 		xdgDataPaths := strings.Split(":", xdgDataPath)
 
 		for _, currentPath := range xdgDataPaths {
+			if len(currentPath) < len(homeDirectory) {
+				continue
+			}
+
 			if currentPath[:len(homeDirectory)] == homeDirectory {
 				return currentPath
 			}

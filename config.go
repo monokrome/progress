@@ -27,6 +27,10 @@ func getConfigurationHome() string {
 		xdgConfigurationPaths := strings.Split(":", xdgConfigurationPath)
 
 		for _, currentPath := range xdgConfigurationPaths {
+			if len(currentPath) < len(homeDirectory) {
+				continue
+			}
+
 			if currentPath[:len(homeDirectory)] == homeDirectory {
 				return currentPath
 			}
