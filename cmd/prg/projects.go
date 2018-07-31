@@ -135,6 +135,8 @@ func taskAddCommand(arguments ...string) {
 			fmt.Fprintf(os.Stderr, "Could not get project (%v): %v\n", projectRef, err)
 			os.Exit(4)
 		}
+
+		arguments = arguments[1:]
 	} else {
 		project, err = database.DefaultProject()
 
