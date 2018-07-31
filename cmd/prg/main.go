@@ -6,6 +6,8 @@ import (
 	"github.com/monokrome/progress"
 	"os"
 	"strings"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 const commandPrefix = "@"
@@ -13,7 +15,7 @@ const defaultConfigurationFileName = "config.yaml"
 const defaultDataFileName = "projects.sqlite3"
 
 var configFilePath string
-var projectsFilePath string
+var projectFilePath string
 
 func init() {
 	flag.StringVar(
@@ -24,7 +26,7 @@ func init() {
 	)
 
 	flag.StringVar(
-		&projectsFilePath,
+		&projectFilePath,
 		"projects",
 		progress.GetDataPath(defaultDataFileName),
 		"specifies the data file where projects are stored",
@@ -86,6 +88,8 @@ func main() {
 			arguments[0] = arguments[0][deltaLength:]
 			truncateLength += deltaLength
 		}
+	} else {
+		command = "task add"
 	}
 
 	registry.Execute(command, arguments)

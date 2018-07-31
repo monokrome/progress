@@ -35,15 +35,17 @@ func (registry *commandRegistry) Execute(command string, arguments []string) {
 		os.Exit(10)
 	}
 
-	handler()
+	handler(arguments...)
 }
 
 func init() {
 	registry = newCommandRegistry()
 
-	registry.register("help", func(_ ...string) { flag.Usage() })
-	registry.register("done", func(arguments ...string) { fmt.Println(arguments) })
 	registry.register("project list", projectListCommand)
+	registry.register("project add", projectAddCommand)
+	registry.register("task add", taskAddCommand)
+
+	registry.register("help", func(_ ...string) { flag.Usage() })
 }
 
 func getCommands() []string {
