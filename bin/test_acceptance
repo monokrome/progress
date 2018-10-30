@@ -29,14 +29,15 @@ check() {
   echo -n $output
 
   hashed=$(echo ${output} | ${shacmd} | cut -f 1 -d \ )
-  echo
 
   if [[ $hashed != $1* ]]; then
 cat<<MSG
 Executing command failed: ${command}
-Command was expected $1 but got $hashed
+Command expected hash $1 but got $hashed
 MSG
     exit 1
+
+    echo
   fi
 }
 
