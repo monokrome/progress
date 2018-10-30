@@ -28,7 +28,7 @@ Here are some example usage commands:
     $ prg project create Another Project
     Created project: Another Project [AOT]
 
-    $ prg Not much.
+    $ prg task create Not much.
     Created task in Another Project: Not much.
 
     $ prg create task -a MTC Fixing CORS issue
