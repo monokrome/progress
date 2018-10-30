@@ -16,6 +16,14 @@ type Options struct {
 	Storage        StorageOptions `yaml:"storage" json:"storage"`
 }
 
+func setDefault(container *string, value string) {
+	if *container != "" {
+		return
+	}
+
+	*container = value
+}
+
 // NewOptions creates a new Options structure
 func NewOptions(identifier string) (Options, *prefer.Configuration, error) {
 	options := Options{}
@@ -24,6 +32,10 @@ func NewOptions(identifier string) (Options, *prefer.Configuration, error) {
 	if err != nil {
 		return options, nil, err
 	}
+
+	setDefault(&options.Storage.Backend, "sqlite3")
+	setDefault(&options.Storage.Options, "progress.sqlite3")
+	setDefault(&options.DefaultProject, "")
 
 	return options, configuration, nil
 }
