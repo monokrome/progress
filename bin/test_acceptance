@@ -13,6 +13,12 @@ PRG=bin/prg
 
 echo "${CONFIG_CONTENTS}" > progress.json
 
+if [[ $(uname -s) == Darwin ]]; then
+  shacmd="shasum -a 256"
+else
+  shacmd="sha256sum"
+fi
+
 # Function to verify hashes of commands
 NOHASH=01ba4719
 check() {
@@ -22,7 +28,7 @@ check() {
   output=$( ${command_string} ``)
   echo -n $output
 
-  hashed=$(echo $output | sha256sum | cut -f 1 -d \ )
+  hashed=$(echo ${output} | ${shacmd} | cut -f 1 -d \ )
 
   if [[ $hashed != $1* ]]; then
 cat<<MSG
