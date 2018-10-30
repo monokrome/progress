@@ -53,6 +53,7 @@ func CreateProject(database *gorm.DB, name string, abbreviation string) error {
 		return err
 	}
 
+	fmt.Printf("Created project: %v\t[%v]\n", project.Name, project.Abbreviation)
 	return nil
 }
 

@@ -40,14 +40,14 @@ MSG
 }
 
 echo - Create a couple projects
-check 01ba4719 project create -a MTC Metanic
-check 01ba4719 project create -a HAP hapengine 
+check a185e342 project create -a MTC Metanic
+check 996b40b5 project create -a HAP hapengine 
 
 # Create some projects w/ abbreviations
 echo - Create a few tasks
-check $NOHASH task create -a MTC first
-check $NOHASH task create -a HAP second
-check $NOHASH task create third
+check ca218322 task create -a MTC first
+check 7d0acbb1 task create -a HAP second
+check b910c4b8 task create third
 
 # Get current active task
 echo - Generate project list
