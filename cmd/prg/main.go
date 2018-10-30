@@ -23,6 +23,8 @@ func main() {
 	var (
 		err error
 
+		selectedAbbreviation = "MTC"
+
 		cli = kingpin.New("progress", "a tool for tracking your progress")
 
 		project = cli.Command("project", "command for managing project")
@@ -82,10 +84,14 @@ func main() {
 		err = ListProjects(database)
 
 	case taskActive.FullCommand():
-		err = TaskActive(database)
+		err = TaskActive(database, selectedAbbreviation)
 
 	case taskCreate.FullCommand():
-		err = CreateTask(database, *taskCreateTopic, *taskCreateAbbreviation)
+		if *taskCreateAbbreviation != "" {
+			selectedAbbreviation = *taskCreateAbbreviation
+		}
+
+		err = CreateTask(database, *taskCreateTopic, selectedAbbreviation)
 
 	case taskList.FullCommand():
 		err = ListTasks(database, *taskListAbbreviation)

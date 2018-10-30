@@ -10,11 +10,16 @@ import (
 
 const whitespace = " \t\n"
 
+// TaskQuery gets a query w/ all necessary preloading for a Task
+func TaskQuery(database *gorm.DB) *gorm.DB {
+	return database.Preload("Tags").Preload("Project")
+}
+
 // Task gets the currently active Task
 func Task(database *gorm.DB) (progress.Task, error) {
 	var task progress.Task
 
-	if err := database.Preload("Tags").Preload("Project").First(&task).Error; err != nil {
+	if err := TaskQuery(database).First(&task).Error; err != nil {
 		return task, err
 	}
 
@@ -37,10 +42,10 @@ func FormatTask(task progress.Task, verbose bool) string {
 }
 
 // TaskActive displays information about the currently active task
-func TaskActive(database *gorm.DB) error {
-	task, err := Task(database)
+func TaskActive(database *gorm.DB, abbreviation string) error {
+	var task progress.Task
 
-	if err != nil {
+	if err := TaskQuery(database).First(&task).Where("project_id = ? AND DeactivatedAt = NULL", abbreviation).Error; err != nil {
 		return err
 	}
 

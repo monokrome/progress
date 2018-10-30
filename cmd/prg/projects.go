@@ -7,25 +7,10 @@ import (
 	"github.com/monokrome/progress"
 )
 
-// ActiveProject returns the project instance currently set to "active"
-func ActiveProject(database *gorm.DB) (progress.Project, error) {
-	var project progress.Project
-
-	if err := database.First(&project).Error; err != nil {
-		return project, err
-	}
-
-	return project, nil
-}
-
 // Project returns a project with the given abbreviation. If abbreviation is
 // an empty string, it will return the current active project.
 func Project(database *gorm.DB, abbreviation string) (progress.Project, error) {
 	var project progress.Project
-
-	if abbreviation == "" {
-		return ActiveProject(database)
-	}
 
 	if err := database.First(&project, "abbreviation = ?", abbreviation).Error; err != nil {
 		return project, err

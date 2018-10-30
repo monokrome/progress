@@ -30,7 +30,7 @@ type Task struct {
 
 	DeactivatedAt time.Time
 
-	Tags []Tag `gorm:"many2many:task_tags;unique_index"`
+	Tags []Tag `gorm:"many2many:task_tags"`
 }
 
 // Project models a projects in the system
@@ -42,7 +42,7 @@ type Project struct {
 
 	Tasks []Task `gorm:"foreignkey:ID"`
 
-	Tags []Tag `gorm:"many2many:project_tags;unique_index"`
+	Tags []Tag `gorm:"many2many:project_tags"`
 }
 
 // EnsureSchema executes any necessary migrations
