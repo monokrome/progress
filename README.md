@@ -17,12 +17,12 @@ This is pretty roughly implemented right now, but it does work.
 Here are some example usage commands:
 
     $ prg project create Metanic -a MTC
-    Adding project: Metanic (MTC) - https://metanic.org
+    Adding project: Metanic [MTC]
 
     $ prg project list
     [MTC] Metanic
 
-    $ prg task create -a MTC 'Testing out prg commands'
+    $ prg task create -a MTC Testing out prg commands
     Created task in Metanic: [MTC] Testing out prg commands
 
     $ prg project create Another Project
@@ -35,10 +35,10 @@ Here are some example usage commands:
     Created task in Metanic: ~MTC Fixing CORS issue
 
     $ prg task list
-    Another Project:
+    Another Project
     - Not much.
 
-    Metanic:
+    Metanic
     - Fixing CORS issue
     - Testing out prg commands
 
