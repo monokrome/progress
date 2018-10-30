@@ -1,6 +1,8 @@
 PREFIX   ?= /usr/local
 BIN_PATH ?= bin/
 
+target=$(BIN_PATH)/prg
+
 all: $(BIN_PATH)prg
 .PHONY: all
 
@@ -12,7 +14,7 @@ install: all
 
 
 clean:
-	rm -rf bin
+	rm -rf $(target)
 .PHONY: clean
 
 
