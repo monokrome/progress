@@ -46,9 +46,9 @@ check 996b40b5 project create -a HAP hapengine
 
 # Create some projects w/ abbreviations
 echo - Create a few tasks
-check ca218322 task create -a MTC first
-check 7d0acbb1 task create -a HAP second
-check b910c4b8 task create third
+check b5d006df task create -a MTC first
+check ca0451ff task create -a HAP second
+check fbca328f task create third
 
 # Get current active task
 echo - Generate project list

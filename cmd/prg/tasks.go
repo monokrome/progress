@@ -94,6 +94,6 @@ func CreateTask(database *gorm.DB, topic string, projectAbbreviation string) err
 
 	database.Create(&task)
 
-	fmt.Printf("Created task: %v\n", FormatTask(task, false))
+	fmt.Printf("Created task in %v: %v\n", task.Project.Name, FormatTask(task, false))
 	return nil
 }
