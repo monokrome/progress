@@ -31,8 +31,17 @@ Here are some example usage commands:
     $ prg Not much.
     Created task in Another Project: Not much.
 
-    $ prg '~MTC' Fixing CORS issue
+    $ prg create task -a MTC Fixing CORS issue
     Created task in Metanic: ~MTC Fixing CORS issue
+
+    $ prg task tag fancy
+    [MTC] Fixing CORS issue @fancy
+
+    $ prg task tag done
+    [MTC] Fixing CORS issue @fancy @done
+
+    $ prg task tag -d fancy
+    [MTC] Fixing CORS issue @done
 
     $ prg task list
     Another Project
