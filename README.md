@@ -57,7 +57,7 @@ Here are some example usage commands:
     $ prg task create meow
     Created task in Another Project: meow
 
-    $ prg @project list
+    $ prg project list
     [MTC] Metanic
     [AOT] Another Project
 
