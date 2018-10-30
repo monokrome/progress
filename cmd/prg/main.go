@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"os"
+	"strings"
 
 	"github.com/jinzhu/gorm"
 	"github.com/monokrome/progress"
@@ -15,17 +15,18 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
+var cli *kingpin.Application
+
 func init() {
+	cli = kingpin.New("progress", "a tool for tracking your progress")
+
+	cli.UsageTemplate(kingpin.CompactUsageTemplate)
 	kingpin.CommandLine.HelpFlag.Short('h')
 }
 
 func main() {
 	var (
 		err error
-
-		selectedAbbreviation = "MTC"
-
-		cli = kingpin.New("progress", "a tool for tracking your progress")
 
 		project = cli.Command("project", "command for managing project")
 
@@ -44,7 +45,7 @@ func main() {
 
 		taskCreate             = task.Command("create", "create a new task")
 		taskCreateAbbreviation = taskCreate.Flag("abbreviation", "abbreviation for the project to create the task in").Default("").Short('a').String()
-		taskCreateTopic        = taskCreate.Arg("topic", "topic of the newly created task").Required().String()
+		taskCreateTopic        = CumulativeArg(taskCreate.Arg("topic", "topic of the newly created task").Required())
 
 		taskTag       = task.Command("tag", "create a new task on the current task")
 		taskTagDetach = taskTag.Flag("detach", "detaches the tag instead of attaching it").Short('d').Bool()
@@ -54,22 +55,22 @@ func main() {
 		taskListAbbreviation = taskList.Flag("abbreviation", "abbreviation for the project to list tasks from").Short('a').String()
 	)
 
-	cli.UsageTemplate(kingpin.CompactUsageTemplate)
-
 	options, _, err := progress.NewOptions("progress")
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to load configuration: %v\n", err)
+		cli.Fatalf("Failed to load configuration: %v\n", err)
 	}
 
 	database, err := gorm.Open(options.Storage.Backend, options.Storage.Options)
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to open database connection: %v\n", err)
+		cli.Fatalf("Failed to open database connection: %v\n", err)
 		os.Exit(1)
 	}
 
 	defer database.Close()
+
+	selectedAbbreviation := options.DefaultProject
 
 	progress.EnsureSchema(database)
 
@@ -91,7 +92,8 @@ func main() {
 			selectedAbbreviation = *taskCreateAbbreviation
 		}
 
-		err = CreateTask(database, *taskCreateTopic, selectedAbbreviation)
+		topic := strings.Join(*taskCreateTopic, " ")
+		err = CreateTask(database, topic, selectedAbbreviation)
 
 	case taskList.FullCommand():
 		err = ListTasks(database, *taskListAbbreviation)
@@ -101,7 +103,6 @@ func main() {
 	}
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "%s\n", err)
-		os.Exit(10)
+		cli.Fatalf("%s\n", err)
 	}
 }
