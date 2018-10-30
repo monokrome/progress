@@ -1,0 +1,15 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: circleci/golang:1.10
+
+    working_directory: /go/src/github.com/monokrome/progress
+
+    steps:
+      - checkout
+      - run: cd cmd/prg && go get .
+      - run: make clean
+      - run: make
+      - run: bin/test_acceptance
