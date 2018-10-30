@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+set -e  # Terminate if any comand errors
+
+echo Executing simple blackbox tests
+
+CONFIG_CONTENTS='{"defaultProject": "MTC", "storage": {"backend": "sqlite3", "options": "projects.sqlite3"}}'
+
+# Set prg location
+PRG=bin/prg
+
+[[ -f projects.sqlite3 ]] && rm projects.sqlite3
+
+echo "${CONFIG_CONTENTS}" > progress.json
+
+# Function to verify hashes of commands
+NOHASH=01ba4719
+check() {
+  command_string="${PRG} ${@:2}"
+
+  echo ${command_string}
+  output=$( ${command_string} ``)
+  echo -n $output
+
+  hashed=$(echo $output | sha256sum | cut -f 1 -d \ )
+
+  if [[ $hashed != $1* ]]; then
+cat<<MSG
+Executing command failed: ${command}
+Command was expected $1 but got $hashed
+MSG
+    exit 1
+  fi
+}
+
+echo - Create a couple projects
+check 01ba4719 project create -a MTC Metanic
+check 01ba4719 project create -a HAP hapengine 
+
+# Create some projects w/ abbreviations
+echo - Create a few tasks
+check $NOHASH task create -a MTC first
+check $NOHASH task create -a HAP second
+check $NOHASH task create third
+
+# Get current active task
+echo - Generate project list
+check 38ce0d6f project list
+
+echo - Generate task list
+check 98e86c8d task list
+
+echo - Get active task
+check fc28df22 task active

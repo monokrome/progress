@@ -13,3 +13,12 @@
 
 # Bin files
 /bin/*
+
+# Development databases
+*.sqlite3
+
+# Development configuration file
+/progress.json
+
+# Allow test scripts
+!/bin/test_*
