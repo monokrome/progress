@@ -28,14 +28,14 @@ func Task(database *gorm.DB) (progress.Task, error) {
 
 // FormatTask returns a user-friendly formatted version of the given task
 func FormatTask(task progress.Task, verbose bool) string {
-	result := fmt.Sprintf("%v\t[%v]", task.Topic, task.Project.Abbreviation)
+	result := fmt.Sprintf("[%v]\t%v", task.Project.Abbreviation, task.Topic)
 
 	for _, tag := range task.Tags {
-		result = fmt.Sprintf("%v\t@%v\t", result, tag.Name)
+		result = fmt.Sprintf("%v @%v", result, tag.Name)
 	}
 
 	if verbose && strings.Trim(task.Description, whitespace) != "" {
-		result = fmt.Sprintf("\n%v\n%v", result, task.Description)
+		result = fmt.Sprintf("%v\n%v", result, task.Description)
 	}
 
 	return result
@@ -62,7 +62,7 @@ func ListTasks(database *gorm.DB, projectAbbreviation string) error {
 	}
 
 	for _, task := range tasks {
-		fmt.Printf("%v\t[%v]\n", task.Topic, task.Project.Abbreviation)
+		fmt.Printf("[%v]\t%v\n", task.Project.Abbreviation, task.Topic)
 	}
 
 	return nil

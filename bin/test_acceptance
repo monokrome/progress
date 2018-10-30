@@ -51,12 +51,12 @@ check $NOHASH task create third
 
 # Get current active task
 echo - Generate project list
-check 38ce0d6f project list
+check 0826007b project list
 
 echo - Generate task list
-check 98e86c8d task list
+check 91056ff6 task list
 
 echo - Get active task
-check fc28df22 task active
+check 0ec647d45 task active
 
 echo

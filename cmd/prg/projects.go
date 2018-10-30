@@ -23,12 +23,20 @@ func Project(database *gorm.DB, abbreviation string) (progress.Project, error) {
 func ListProjects(database *gorm.DB) error {
 	var projects []progress.Project
 
+	activeTasks := 0
+
 	if err := database.Preload("Tasks").Find(&projects).Error; err != nil {
 		return err
 	}
 
 	for _, project := range projects {
-		fmt.Printf("%v\t[%v]\t?/%v\n", project.Name, project.Abbreviation, len(project.Tasks))
+		for _, task := range project.Tasks {
+			if task.DeactivatedAt == nil {
+				activeTasks++
+			}
+		}
+
+		fmt.Printf("[%v]\t%v\t%v/%v\n", project.Abbreviation, project.Name, activeTasks, len(project.Tasks))
 	}
 
 	return nil

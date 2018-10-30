@@ -28,7 +28,7 @@ type Task struct {
 	Topic       string `gorm:"not null"`
 	Description string `gorm:"default:''"`
 
-	DeactivatedAt time.Time
+	DeactivatedAt *time.Time
 
 	Tags []Tag `gorm:"many2many:task_tags"`
 }

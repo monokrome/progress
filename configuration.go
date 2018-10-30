@@ -12,7 +12,8 @@ type StorageOptions struct {
 
 // Options stores user options
 type Options struct {
-	Storage StorageOptions `yaml:"storage" json:"storage"`
+	DefaultProject string         `yaml:"defaultProject" json:"defaultProject"`
+	Storage        StorageOptions `yaml:"storage" json:"storage"`
 }
 
 // NewOptions creates a new Options structure
