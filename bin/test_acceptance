@@ -29,6 +29,7 @@ check() {
   echo -n $output
 
   hashed=$(echo ${output} | ${shacmd} | cut -f 1 -d \ )
+  echo
 
   if [[ $hashed != $1* ]]; then
 cat<<MSG
