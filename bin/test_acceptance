@@ -58,3 +58,5 @@ check 98e86c8d task list
 
 echo - Get active task
 check fc28df22 task active
+
+echo
