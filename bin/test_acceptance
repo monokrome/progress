@@ -54,7 +54,7 @@ echo - Generate project list
 check 0826007b project list
 
 echo - Generate task list
-check 91056ff6 task list
+check 575536b8 task list
 
 echo - Get active task
 check 0ec647d45 task active

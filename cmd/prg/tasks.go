@@ -56,13 +56,23 @@ func TaskActive(database *gorm.DB, abbreviation string) error {
 // ListTasks creates a new task within the currently active project
 func ListTasks(database *gorm.DB, projectAbbreviation string) error {
 	var tasks []progress.Task
+	var previousAbbreviation string
 
-	if err := database.Preload("Project").Find(&tasks).Order("created_at").Order("project_id").Error; err != nil {
+	if err := database.Preload("Project").Order("project_id").Find(&tasks).Error; err != nil {
 		return err
 	}
 
 	for _, task := range tasks {
-		fmt.Printf("[%v]\t%v\n", task.Project.Abbreviation, task.Topic)
+		if previousAbbreviation != task.Project.Abbreviation {
+			if previousAbbreviation != "" {
+				fmt.Printf("\n")
+			}
+
+			fmt.Printf("%v [%v]\n", task.Project.Abbreviation, task.Project.Name)
+			previousAbbreviation = task.Project.Abbreviation
+		}
+
+		fmt.Printf("- %v\n", task.Topic)
 	}
 
 	return nil
