@@ -31,7 +31,7 @@ Here are some example usage commands:
     $ prg task create Not much.
     Created task in Another Project: Not much.
 
-    $ prg create task -a MTC Fixing CORS issue
+    $ prg task create -a MTC Fixing CORS issue
     Created task in Metanic: [MTC] Fixing CORS issue
 
     $ prg task tag fancy
@@ -54,7 +54,7 @@ Here are some example usage commands:
     $ prg -a MTC Breaking CORS cuz YOLO
     Created task in Metanic: Breaking CORS cuz YOLO
 
-    $ prg create task meow
+    $ prg task create meow
     Created task in Another Project: meow
 
     $ prg @project list
