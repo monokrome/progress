@@ -16,43 +16,41 @@ This is pretty roughly implemented right now, but it does work.
 
 Here are some example usage commands:
 
-    $ prg project create -a MTC -d https://metanic.org Metanic
+    $ prg project create Metanic -a MTC
     Adding project: Metanic (MTC) - https://metanic.org
 
     $ prg project list
-    [MTC] Metanic - https://metanic.org
+    [MTC] Metanic
 
     $ prg task create -a MTC 'Testing out prg commands'
-    Adding task to Metanic: Testing out prg commands
+    Created task in Metanic: [MTC] Testing out prg commands
 
-    $ prg @project add "Another Project" _ Some other project. Doesn\'t matter, tbh.
-    Adding project: Another Project (AOT) - Some other project. Doesn't matter, tbh.
+    $ prg project create Another Project
+    Created project: Another Project [AOT]
 
     $ prg Not much.
-    Adding task to Another Project: Not much.
+    Created task in Another Project: Not much.
 
     $ prg '~MTC' Fixing CORS issue
-    Adding task to Metanic: ~MTC Fixing CORS issue
+    Created task in Metanic: ~MTC Fixing CORS issue
 
-    $ prg @task list
+    $ prg task list
     Another Project:
-    - Not much. [2]
+    - Not much.
+
     Metanic:
-    - ~MTC Fixing CORS issue [3]
-    - Testing out prg commands [1]
+    - Fixing CORS issue
+    - Testing out prg commands
 
-    $ prg '~MTC' Breaking CORS cuz YOLO
-    Adding task to Metanic: Breaking CORS cuz YOLO
+    $ prg -a MTC Breaking CORS cuz YOLO
+    Created task in Metanic: Breaking CORS cuz YOLO
 
-    $ prg meow
-    Adding task to Another Project: meow
-
-    $ prg '~MTC' 'Eating M&Ms'
-    Adding task to Metanic: Eating M&Ms
+    $ prg create task meow
+    Created task in Another Project: meow
 
     $ prg @project list
-    [MTC] Metanic - https://metanic.org
-    [AOT] Another Project - Some other project. Doesn't matter, tbh.
+    [MTC] Metanic
+    [AOT] Another Project
 
 
 ## Roadmap
