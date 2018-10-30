@@ -32,7 +32,7 @@ Here are some example usage commands:
     Created task in Another Project: Not much.
 
     $ prg create task -a MTC Fixing CORS issue
-    Created task in Metanic: ~MTC Fixing CORS issue
+    Created task in Metanic: [MTC] Fixing CORS issue
 
     $ prg task tag fancy
     [MTC] Fixing CORS issue @fancy
