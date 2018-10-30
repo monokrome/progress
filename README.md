@@ -75,3 +75,6 @@ Here are some example usage commands:
   * [ ]: Ability to provide long-form details (optionally, using $EDITOR)
 * [x]: Tagging tasks, projects, etc with arbitrary metadata
 * [ ]: Support GPG Signing of database entries with every update
+* [ ]: Taskpaper Format Integeration
+  * [ ]: Export to TaskPaper
+  * [ ]: Import from TaskPaper
