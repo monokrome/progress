@@ -16,15 +16,14 @@ func panicIfSet(err error) {
 	}
 }
 
-func abbreviationFlag(flagSet *flag.FlagSet, abbreviation *string) {
-	flagSet.StringVarP(abbreviation, "abbreviation", "a", "", "abbreviation for the project this task belongs to")
+func abbreviationFlag(flagSet *flag.FlagSet, abbreviation *string, initial string) {
+	flagSet.StringVarP(abbreviation, "abbreviation", "a", initial, "abbreviation for the project this task belongs to")
 }
 
 // CommandLine parses the command-line and returns a CommandLine object
 func CommandLine(options progress.Options, database *gorm.DB) *cobra.Command {
 	var all bool
-
-	abbreviation := options.DefaultProject
+	var abbreviation string
 
 	projects := &cobra.Command{
 		Use:   "project",
@@ -51,7 +50,7 @@ func CommandLine(options progress.Options, database *gorm.DB) *cobra.Command {
 		},
 	}
 
-	abbreviationFlag(projectCreate.PersistentFlags(), &abbreviation)
+	abbreviationFlag(projectCreate.PersistentFlags(), &abbreviation, options.DefaultProject)
 
 	projects.AddCommand(projectList)
 	projects.AddCommand(projectCreate)
@@ -107,7 +106,7 @@ func CommandLine(options progress.Options, database *gorm.DB) *cobra.Command {
 	tasks.AddCommand(taskList)
 	tasks.AddCommand(taskTag)
 
-	abbreviationFlag(tasks.PersistentFlags(), &abbreviation)
+	abbreviationFlag(tasks.PersistentFlags(), &abbreviation, options.DefaultProject)
 
 	cli := &cobra.Command{
 		Use:   "prg",
