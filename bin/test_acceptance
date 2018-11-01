@@ -25,7 +25,6 @@ check() {
   command_string="${PRG} ${@:2}"
 
   echo ${command_string}
-  echo ----
   output=$( ${command_string} )
   echo -n $output
 
