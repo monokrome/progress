@@ -78,7 +78,7 @@ func TaskList(database *gorm.DB, abbreviation string) error {
 				fmt.Printf("\n")
 			}
 
-			fmt.Printf("%v [%v]\n", task.Project.Abbreviation, task.Project.Name)
+			fmt.Printf("%v [%v]\n", task.Project.Name, task.Project.Abbreviation)
 			previousAbbreviation = task.Project.Abbreviation
 		}
 
