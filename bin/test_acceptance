@@ -25,6 +25,7 @@ check() {
   command_string="${PRG} ${@:2}"
 
   echo ${command_string}
+  echo ----
   output=$( ${command_string} )
   echo -n $output
 
@@ -49,4 +50,4 @@ check ca0451ff task create -a HAP second
 check fbca328f task create third
 check 0826007b project list
 check 575536b8 task list
-check 0ec647d45 task active
+check 25a436ea task active
