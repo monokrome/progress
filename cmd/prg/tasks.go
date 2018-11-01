@@ -11,15 +11,21 @@ import (
 const whitespace = " \t\n"
 
 // QueryTask gets a query w/ all necessary preloading for a Task
-func QueryTask(database *gorm.DB) *gorm.DB {
-	return database.Preload("Tags").Preload("Project")
+func QueryTask(database *gorm.DB, abbreviation string) *gorm.DB {
+	query := database.Preload("Tags").Preload("Project").Order("updated_at DESC, created_at DESC")
+
+	if abbreviation != "" {
+		query = query.Where("project_id = ? AND DeactivatedAt = NULL", abbreviation)
+	}
+
+	return query
 }
 
 // Task gets the currently active Task
 func Task(database *gorm.DB) (progress.Task, error) {
 	var task progress.Task
 
-	if err := QueryTask(database).First(&task).Error; err != nil {
+	if err := QueryTask(database, "").First(&task).Error; err != nil {
 		return task, err
 	}
 
@@ -45,10 +51,9 @@ func FormatTask(task progress.Task, verbose bool) string {
 func TaskActive(database *gorm.DB, abbreviation string) error {
 	var task progress.Task
 
-	where := "project_id = ? AND DeactivatedAt = NULL"
-	query := QueryTask(database).First(&task).Where(where, abbreviation)
+	query := QueryTask(database, abbreviation)
 
-	if err := query.Error; err != nil {
+	if err := query.First(&task).Error; err != nil {
 		return err
 	}
 
@@ -57,7 +62,7 @@ func TaskActive(database *gorm.DB, abbreviation string) error {
 }
 
 // TaskList creates a new task within the currently active project
-func TaskList(database *gorm.DB, projectAbbreviation string) error {
+func TaskList(database *gorm.DB, abbreviation string) error {
 	var tasks []progress.Task
 	var previousAbbreviation string
 
@@ -82,8 +87,8 @@ func TaskList(database *gorm.DB, projectAbbreviation string) error {
 }
 
 // TaskCreate creates a new task within the currently active project
-func TaskCreate(database *gorm.DB, topic string, projectAbbreviation string) error {
-	project, err := Project(database, projectAbbreviation)
+func TaskCreate(database *gorm.DB, topic string, abbreviation string) error {
+	project, err := Project(database, abbreviation)
 
 	if err != nil {
 		return err

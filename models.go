@@ -8,14 +8,20 @@ import (
 	"github.com/satori/go.uuid"
 )
 
-// Tag models a specific tag that can be used to label something
-type Tag struct {
-	Name string `gorm:"primary_key;not null"`
-}
-
-// Model is the base Model that we define everything under
+// Model is the base model that we define everything under
 type Model struct {
 	ID string `gorm:"primary_key"`
+
+	CreatedAt     *time.Time `gorm:"not null;default:NOW"`
+	UpdatedAt     *time.Time `gorm:"not null;default:NOW"`
+	DeactivatedAt *time.Time `gorm:"default:NULL"`
+}
+
+// Tag models a specific tag that can be used to label something
+type Tag struct {
+	Model
+
+	Name string `gorm:"primary key;not null"`
 }
 
 // Task models a single task in a project
@@ -27,8 +33,6 @@ type Task struct {
 
 	Topic       string `gorm:"not null"`
 	Description string `gorm:"default:''"`
-
-	DeactivatedAt *time.Time
 
 	Tags []Tag `gorm:"many2many:task_tags"`
 }
@@ -54,10 +58,14 @@ func EnsureSchema(database *gorm.DB) {
 
 // BeforeSave gets called before objects are created
 func (instance *Model) BeforeSave() {
+	currentTime := time.Now()
+
 	// Ensure this object has a UUID assigned to it
 	if instance.ID == "" {
 		instance.ID = uuid.Must(uuid.NewV4()).String()
 	}
+
+	instance.UpdatedAt = &currentTime
 }
 
 // BeforeCreate ensures tag names are lowercase

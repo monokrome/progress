@@ -23,7 +23,8 @@ func abbreviationFlag(flagSet *flag.FlagSet, abbreviation *string) {
 // CommandLine parses the command-line and returns a CommandLine object
 func CommandLine(options progress.Options, database *gorm.DB) *cobra.Command {
 	var all bool
-	var abbreviation string
+
+	abbreviation := options.DefaultProject
 
 	projects := &cobra.Command{
 		Use:   "project",

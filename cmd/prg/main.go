@@ -37,11 +37,15 @@ func main() {
 	transaction := database.Begin()
 
 	defer func() {
-		if r := recover(); r != nil {
-			transaction.Rollback()
-			fmt.Fprintf(os.Stderr, "Command failed: %v\n", r)
-			os.Exit(1)
+		r := recover()
+		if r == nil {
+			return
 		}
+
+		transaction.Rollback()
+		fmt.Fprintf(os.Stderr, "Command failed: %v\n", r)
+
+		os.Exit(1)
 	}()
 
 	CommandLine(options, transaction).Execute()
