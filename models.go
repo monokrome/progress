@@ -1,21 +1,21 @@
 package progress
 
 import (
-	"github.com/jinzhu/gorm"
 	"strings"
 	"time"
+
+	"github.com/jinzhu/gorm"
+	"github.com/satori/go.uuid"
 )
 
 // Tag models a specific tag that can be used to label something
 type Tag struct {
-	gorm.Model
-
-	Name string `gorm:"not null;unique_index"`
+	Name string `gorm:"primary_key;not null"`
 }
 
 // Model is the base Model that we define everything under
 type Model struct {
-	ID string
+	ID string `gorm:"primary_key"`
 }
 
 // Task models a single task in a project
@@ -23,7 +23,7 @@ type Task struct {
 	Model
 
 	Project   Project `gorm:"foreign_key:ProjectID"`
-	ProjectID uint    `gorm:"not null"`
+	ProjectID string  `gorm:"not null"`
 
 	Topic       string `gorm:"not null"`
 	Description string `gorm:"default:''"`
@@ -35,7 +35,7 @@ type Task struct {
 
 // Project models a projects in the system
 type Project struct {
-	gorm.Model
+	Model
 
 	Name         string `gorm:"unique_index"`
 	Abbreviation string `gorm:"unique_index;size:5"`
@@ -52,7 +52,15 @@ func EnsureSchema(database *gorm.DB) {
 	database.AutoMigrate(&Tag{})
 }
 
+// BeforeSave gets called before objects are created
+func (instance *Model) BeforeSave() {
+	// Ensure this object has a UUID assigned to it
+	if instance.ID == "" {
+		instance.ID = uuid.Must(uuid.NewV4()).String()
+	}
+}
+
 // BeforeCreate ensures tag names are lowercase
-func (tag Tag) BeforeCreate() {
+func (tag *Tag) BeforeCreate() {
 	tag.Name = strings.ToLower(tag.Name)
 }
