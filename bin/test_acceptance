@@ -41,22 +41,11 @@ MSG
   fi
 }
 
-echo - Create a couple projects
-check a185e342 project create -a MTC Metanic
+check a185e342 project create Metanic
+check b5d006df task create first
 check 996b40b5 project create -a HAP hapengine 
-
-# Create some projects w/ abbreviations
-echo - Create a few tasks
-check b5d006df task create -a MTC first
 check ca0451ff task create -a HAP second
 check fbca328f task create third
-
-# Get current active task
-echo - Generate project list
 check 0826007b project list
-
-echo - Generate task list
 check 575536b8 task list
-
-echo - Get active task
 check 0ec647d45 task active
