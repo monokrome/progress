@@ -35,10 +35,11 @@ cat<<MSG
 Executing command failed: ${command}
 Command expected hash $1 but got $hashed
 MSG
-    exit 1
-
     echo
+    exit 1
   fi
+
+  echo
 }
 
 check a185e342 project create Metanic
