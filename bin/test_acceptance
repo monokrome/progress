@@ -49,5 +49,5 @@ check 996b40b5 project create -a HAP hapengine
 check ca0451ff task create -a HAP second
 check fbca328f task create third
 check 0826007b project list
-check 575536b8 task list
+check 709940aa task list
 check 25a436ea task active
