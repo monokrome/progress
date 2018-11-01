@@ -38,7 +38,7 @@ type Project struct {
 	gorm.Model
 
 	Name         string `gorm:"unique_index"`
-	Abbreviation string `gorm:"unique_index"`
+	Abbreviation string `gorm:"unique_index;size:5"`
 
 	Tasks []Task `gorm:"foreignkey:ID"`
 

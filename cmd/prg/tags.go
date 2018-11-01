@@ -26,8 +26,8 @@ func FormatTag(tag progress.Tag) string {
 	return fmt.Sprintf("@%v", tag.Name)
 }
 
-// TaskTag adds or removes tags from tasks
-func TaskTag(database *gorm.DB, shouldDetach bool, value string) error {
+// TagTask adds or removes tags from tasks
+func TagTask(database *gorm.DB, shouldDetach bool, value string) error {
 	tag, err := Tag(database, value)
 
 	if err != nil {

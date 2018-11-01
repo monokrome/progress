@@ -10,8 +10,8 @@ import (
 
 const whitespace = " \t\n"
 
-// TaskQuery gets a query w/ all necessary preloading for a Task
-func TaskQuery(database *gorm.DB) *gorm.DB {
+// QueryTask gets a query w/ all necessary preloading for a Task
+func QueryTask(database *gorm.DB) *gorm.DB {
 	return database.Preload("Tags").Preload("Project")
 }
 
@@ -19,7 +19,7 @@ func TaskQuery(database *gorm.DB) *gorm.DB {
 func Task(database *gorm.DB) (progress.Task, error) {
 	var task progress.Task
 
-	if err := TaskQuery(database).First(&task).Error; err != nil {
+	if err := QueryTask(database).First(&task).Error; err != nil {
 		return task, err
 	}
 
@@ -45,7 +45,10 @@ func FormatTask(task progress.Task, verbose bool) string {
 func TaskActive(database *gorm.DB, abbreviation string) error {
 	var task progress.Task
 
-	if err := TaskQuery(database).First(&task).Where("project_id = ? AND DeactivatedAt = NULL", abbreviation).Error; err != nil {
+	where := "project_id = ? AND DeactivatedAt = NULL"
+	query := QueryTask(database).First(&task).Where(where, abbreviation)
+
+	if err := query.Error; err != nil {
 		return err
 	}
 
@@ -53,8 +56,8 @@ func TaskActive(database *gorm.DB, abbreviation string) error {
 	return nil
 }
 
-// ListTasks creates a new task within the currently active project
-func ListTasks(database *gorm.DB, projectAbbreviation string) error {
+// TaskList creates a new task within the currently active project
+func TaskList(database *gorm.DB, projectAbbreviation string) error {
 	var tasks []progress.Task
 	var previousAbbreviation string
 
@@ -78,8 +81,8 @@ func ListTasks(database *gorm.DB, projectAbbreviation string) error {
 	return nil
 }
 
-// CreateTask creates a new task within the currently active project
-func CreateTask(database *gorm.DB, topic string, projectAbbreviation string) error {
+// TaskCreate creates a new task within the currently active project
+func TaskCreate(database *gorm.DB, topic string, projectAbbreviation string) error {
 	project, err := Project(database, projectAbbreviation)
 
 	if err != nil {
