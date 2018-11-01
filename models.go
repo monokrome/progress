@@ -10,26 +10,31 @@ import (
 
 // Model is the base model that we define everything under
 type Model struct {
-	ID string `gorm:"primary_key"`
+	CreatedAt *time.Time `gorm:"not null;default:NOW"`
+	UpdatedAt *time.Time `gorm:"not null;default:NOW"`
+	DeletedAt *time.Time `gorm:"default:NULL"`
+}
 
-	CreatedAt     *time.Time `gorm:"not null;default:NOW"`
-	UpdatedAt     *time.Time `gorm:"not null;default:NOW"`
-	DeactivatedAt *time.Time `gorm:"default:NULL"`
+// UUIDModel extends Model with an automatically generated UUIDv4 ID
+type UUIDModel struct {
+	Model
+
+	ID string `gorm:"primary_key"`
 }
 
 // Tag models a specific tag that can be used to label something
 type Tag struct {
-	Model
+	UUIDModel
 
-	Name string `gorm:"primary key;not null"`
+	Name string `gorm:"not null"`
 }
 
 // Task models a single task in a project
 type Task struct {
-	Model
+	UUIDModel
 
-	Project   Project `gorm:"foreign_key:ProjectID"`
-	ProjectID string  `gorm:"not null"`
+	Project             Project `gorm:"foreign_key:ProjectAbbreviation"`
+	ProjectAbbreviation string  `gorm:"not null"`
 
 	Topic       string `gorm:"not null"`
 	Description string `gorm:"default:''"`
@@ -41,8 +46,8 @@ type Task struct {
 type Project struct {
 	Model
 
-	Name         string `gorm:"unique_index"`
-	Abbreviation string `gorm:"unique_index;size:5"`
+	Name         string `gorm:"unique_index;not null"`
+	Abbreviation string `gorm:"primary_key;size:5"`
 
 	Tasks []Task `gorm:"foreignkey:ID"`
 
@@ -56,19 +61,21 @@ func EnsureSchema(database *gorm.DB) {
 	database.AutoMigrate(&Tag{})
 }
 
-// BeforeSave gets called before objects are created
+// BeforeSave gets called before objects are saved
 func (instance *Model) BeforeSave() {
 	currentTime := time.Now()
+	instance.UpdatedAt = &currentTime
+}
 
+// BeforeSave gets called before objects are saved
+func (instance *UUIDModel) BeforeSave() {
 	// Ensure this object has a UUID assigned to it
 	if instance.ID == "" {
 		instance.ID = uuid.Must(uuid.NewV4()).String()
 	}
-
-	instance.UpdatedAt = &currentTime
 }
 
-// BeforeCreate ensures tag names are lowercase
+// BeforeCreate gets called before objects are created
 func (tag *Tag) BeforeCreate() {
 	tag.Name = strings.ToLower(tag.Name)
 }

@@ -46,7 +46,7 @@ func CommandLine(options progress.Options, database *gorm.DB) *cobra.Command {
 		Args:  cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			name := strings.Join(args, " ")
-			panicIfSet(CreateProject(database, name, abbreviation))
+			panicIfSet(ProjectCreate(database, name, abbreviation))
 		},
 	}
 

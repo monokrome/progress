@@ -20,11 +20,11 @@ func determineAbbreviation(name string) (abbreviation string) {
 }
 
 // Project returns a project with the given abbreviation. If abbreviation is
-// an empty string, it will return the current active project.
+// an empty string, it will get the most recently updated project.
 func Project(database *gorm.DB, abbreviation string) (progress.Project, error) {
 	var project progress.Project
 
-	query := database
+	query := database.Order("updated_at DESC, created_at DESC")
 
 	if abbreviation != "" {
 		query = query.Where("abbreviation = ?", abbreviation)
@@ -53,7 +53,7 @@ func ProjectList(database *gorm.DB) error {
 
 	for _, project := range projects {
 		for _, task := range project.Tasks {
-			if task.DeactivatedAt == nil {
+			if task.DeletedAt == nil {
 				activeTasks++
 			}
 		}
@@ -64,10 +64,14 @@ func ProjectList(database *gorm.DB) error {
 	return nil
 }
 
-// CreateProject lets users create projects in the database
-func CreateProject(database *gorm.DB, name string, abbreviation string) error {
+// ProjectCreate lets users create projects in the database
+func ProjectCreate(database *gorm.DB, name string, abbreviation string) error {
 	if abbreviation == "" {
 		abbreviation = determineAbbreviation(name)
+	}
+
+	if name == "" {
+		return errors.New("can not create a project without a name")
 	}
 
 	project := progress.Project{
@@ -83,8 +87,8 @@ func CreateProject(database *gorm.DB, name string, abbreviation string) error {
 	return nil
 }
 
-// RemoveProject lets users remove projects from the database
-func RemoveProject(database *gorm.DB, abbreviation string) error {
+// ProjectRemove lets users remove projects from the database
+func ProjectRemove(database *gorm.DB, abbreviation string) error {
 	var project progress.Project
 
 	if err := database.First(&project, "abbreviation = ?", abbreviation).Error; err != nil {

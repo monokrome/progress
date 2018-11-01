@@ -11,21 +11,25 @@ import (
 const whitespace = " \t\n"
 
 // QueryTask gets a query w/ all necessary preloading for a Task
-func QueryTask(database *gorm.DB, abbreviation string) *gorm.DB {
-	query := database.Preload("Tags").Preload("Project").Order("updated_at DESC, created_at DESC")
+func QueryTask(database *gorm.DB, abbreviation string, deleted bool) *gorm.DB {
+	query := database.Preload("Tags").Preload("Project").Find(&progress.Task{})
 
 	if abbreviation != "" {
-		query = query.Where("project_id = ? AND DeactivatedAt = NULL", abbreviation)
+		query = query.Where("project_abbreviation = ?", abbreviation)
 	}
 
-	return query
+	if deleted != true {
+		query = query.Where("deleted_at IS ?", nil)
+	}
+
+	return query.Order("project_abbreviation ASC, updated_at DESC, created_at DESC")
 }
 
 // Task gets the currently active Task
 func Task(database *gorm.DB) (progress.Task, error) {
 	var task progress.Task
 
-	if err := QueryTask(database, "").First(&task).Error; err != nil {
+	if err := QueryTask(database, "", false).First(&task).Error; err != nil {
 		return task, err
 	}
 
@@ -51,9 +55,7 @@ func FormatTask(task progress.Task, verbose bool) string {
 func TaskActive(database *gorm.DB, abbreviation string) error {
 	var task progress.Task
 
-	query := QueryTask(database, abbreviation)
-
-	if err := query.First(&task).Error; err != nil {
+	if err := QueryTask(database, abbreviation, false).First(&task).Error; err != nil {
 		return err
 	}
 
@@ -66,7 +68,7 @@ func TaskList(database *gorm.DB, abbreviation string) error {
 	var tasks []progress.Task
 	var previousAbbreviation string
 
-	if err := database.Preload("Project").Order("project_id").Find(&tasks).Error; err != nil {
+	if err := database.Preload("Project").Order("project_abbreviation").Find(&tasks).Error; err != nil {
 		return err
 	}
 

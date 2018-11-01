@@ -36,8 +36,10 @@ func main() {
 
 	transaction := database.Begin()
 
+	// Provides automatic rollback on panic
 	defer func() {
 		r := recover()
+
 		if r == nil {
 			return
 		}
