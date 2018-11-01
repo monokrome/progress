@@ -39,7 +39,7 @@ func main() {
 	defer func() {
 		if r := recover(); r != nil {
 			transaction.Rollback()
-			fmt.Fprintf(os.Stderr, "Command failed: %s\n", r)
+			fmt.Fprintf(os.Stderr, "Command failed: %v\n", r)
 			os.Exit(1)
 		}
 	}()
