@@ -3,13 +3,13 @@ BIN_PATH ?= bin
 
 target=$(BIN_PATH)/prg
 
-all: $(BIN_PATH)prg
+all: $(target)
 .PHONY: all
 
 
 install: all
 	mkdir -p $(PREFIX)/bin/
-	cp $(BIN_PATH)* $(PREFIX)/bin/
+	cp $(BIN_PATH)/* $(PREFIX)/bin/
 .PHONY: install
 
 
