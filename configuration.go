@@ -27,7 +27,7 @@ func setDefault(container *string, value string) {
 // NewOptions creates a new Options structure
 func NewOptions(identifier string) (Options, *prefer.Configuration, error) {
 	options := Options{}
-	configuration, err := prefer.Load("progress", &options)
+	configuration, err := prefer.Load(identifier, nil, &options)
 
 	if err != nil {
 		return options, nil, err

@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -40,6 +42,8 @@ func tempFile(reason string, initialContent string) (string, error) {
 }
 
 func edit(content string) (string, error) {
+	var outputStream bytes.Buffer
+
 	editor := os.Getenv("EDITOR")
 
 	if editor == "" {
@@ -54,11 +58,12 @@ func edit(content string) (string, error) {
 
 	command := exec.Command(editor, absolutePath)
 
-	command.Stderr = os.Stderr
 	command.Stdin = os.Stdin
-	command.Stdout = os.Stdout
 
-	outputBytes, err := command.Output()
-	output := fmt.Sprintf("%v", outputBytes)
-	return output, err
+	command.Stdout = io.MultiWriter(os.Stdout, &outputStream)
+	command.Stderr = io.MultiWriter(os.Stderr, &outputStream)
+
+	err = command.Run()
+
+	return outputStream.String(), err
 }
