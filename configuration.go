@@ -12,8 +12,9 @@ type StorageOptions struct {
 
 // Options stores user options
 type Options struct {
-	DefaultProject string         `yaml:"defaultProject" json:"defaultProject"`
-	Storage        StorageOptions `yaml:"storage" json:"storage"`
+	DefaultProject   string         `yaml:"defaultProject" json:"defaultProject"`
+	DeactivationTags []string       `yaml:"deactivationTags" json:"deactivationTags"`
+	Storage          StorageOptions `yaml:"storage" json:"storage"`
 }
 
 func setDefault(container *string, value string) {

@@ -25,6 +25,7 @@ func CommandLine(options progress.Options, database *gorm.DB) *cobra.Command {
 	var all bool
 	var abbreviation string
 	var verbose bool
+	var shouldDelete bool
 
 	// Special abbreviation for the `project create` use-case
 	var projectCreateAbbreviation string
@@ -80,7 +81,7 @@ func CommandLine(options progress.Options, database *gorm.DB) *cobra.Command {
 		Args:  cobra.ArbitraryArgs,
 		Run: func(cmd *cobra.Command, tags []string) {
 			for _, tag := range tags {
-				panicIfSet(TagTask(database, false, tag))
+				panicIfSet(TaskTag(database, shouldDelete, tag))
 			}
 		},
 	}
@@ -94,6 +95,7 @@ func CommandLine(options progress.Options, database *gorm.DB) *cobra.Command {
 		},
 	}
 
+	taskTag.PersistentFlags().BoolVarP(&shouldDelete, "detach", "d", false, "detach the given tag instead of attaching it")
 	taskList.PersistentFlags().BoolVar(&all, "all", false, "show previous tasks along with current tasks")
 
 	taskActive := &cobra.Command{

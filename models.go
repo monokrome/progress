@@ -24,9 +24,9 @@ type UUIDModel struct {
 
 // Tag models a specific tag that can be used to label something
 type Tag struct {
-	UUIDModel
+	Model
 
-	Name string `gorm:"not null"`
+	ID string `gorm:"primary key"`
 }
 
 // Task models a single task in a project
@@ -38,8 +38,9 @@ type Task struct {
 
 	Topic       string `gorm:"not null"`
 	Description string `gorm:"default:''"`
+	Tags        []Tag  `gorm:"many2many:task_tags"`
 
-	Tags []Tag `gorm:"many2many:task_tags"`
+	DeactivatedAt *time.Time `gorm:"index;default:NULL"`
 }
 
 // Project models a projects in the system
@@ -81,5 +82,56 @@ func (instance *UUIDModel) BeforeSave() {
 
 // BeforeCreate gets called before objects are created
 func (tag *Tag) BeforeCreate() {
-	tag.Name = strings.ToLower(tag.Name)
+	tag.ID = strings.ToLower(tag.ID)
+}
+
+// RecheckActiveState updates active state if necessary
+func (task *Task) RecheckActiveState(database *gorm.DB) (bool, error) {
+	var tags []Tag
+
+	currentTime := time.Now()
+	deactivationTagNames := []string{"done", "skip"}
+
+	requiresUpdate := false
+
+	if err := database.Model(&task).Association("Tags").Find(&tags).Error; err != nil {
+		return false, err
+	}
+
+	for _, tag := range tags {
+		if requiresUpdate {
+			break
+		}
+
+		for _, name := range deactivationTagNames {
+			if tag.ID == name {
+				if task.DeactivatedAt != nil {
+					return requiresUpdate, nil
+				}
+
+				task.DeactivatedAt = &currentTime
+				requiresUpdate = true
+				break
+			}
+		}
+	}
+
+	if task.DeactivatedAt != nil {
+		task.DeactivatedAt = nil
+		requiresUpdate = true
+	}
+
+	if !requiresUpdate {
+		return requiresUpdate, nil
+	}
+
+	if err := database.Save(&task).Error; err != nil {
+		return requiresUpdate, err
+	}
+
+	if err := database.Model(&task).Association("Tags").Replace(&tags).Error; err != nil {
+		return requiresUpdate, err
+	}
+
+	return requiresUpdate, nil
 }

@@ -12,7 +12,7 @@ import (
 func Tag(database *gorm.DB, name string) (progress.Tag, error) {
 	var tag progress.Tag
 
-	err := database.FirstOrCreate(&tag, progress.Tag{Name: strings.ToLower(name)}).Error
+	err := database.FirstOrCreate(&tag, progress.Tag{ID: strings.ToLower(name)}).Error
 
 	if err != nil {
 		return tag, err
@@ -23,18 +23,18 @@ func Tag(database *gorm.DB, name string) (progress.Tag, error) {
 
 // FormatTag returns a user-friendly formatted tag
 func FormatTag(tag progress.Tag) string {
-	return fmt.Sprintf("@%v", tag.Name)
+	return fmt.Sprintf("@%v", tag.ID)
 }
 
-// TagTask adds or removes tags from tasks
-func TagTask(database *gorm.DB, shouldDetach bool, value string) error {
+// TaskTag changes attachment of tags to tasks
+func TaskTag(database *gorm.DB, shouldDetach bool, value string) error {
 	tag, err := Tag(database, value)
 
 	if err != nil {
 		return err
 	}
 
-	task, err := Task(database)
+	task, err := Task(database, true)
 	if err != nil {
 		return err
 	}
@@ -50,6 +50,8 @@ func TagTask(database *gorm.DB, shouldDetach bool, value string) error {
 	if err := association.Error; err != nil {
 		return err
 	}
+
+	task.RecheckActiveState(database)
 
 	fmt.Println(FormatTask(task, true))
 

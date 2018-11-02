@@ -11,25 +11,25 @@ import (
 const whitespace = " \t\n"
 
 // QueryTask gets a query w/ all necessary preloading for a Task
-func QueryTask(database *gorm.DB, abbreviation string, deleted bool) *gorm.DB {
+func QueryTask(database *gorm.DB, abbreviation string, includeInactive bool) *gorm.DB {
 	query := database.Preload("Tags").Preload("Project").Find(&progress.Task{})
 
 	if abbreviation != "" {
 		query = query.Where("project_abbreviation = ?", abbreviation)
 	}
 
-	if deleted == true {
-		query = query.Unscoped()
+	if includeInactive != true {
+		query = query.Where("deactivated_at IS NOT NULL")
 	}
 
 	return query.Order("updated_at DESC, created_at DESC")
 }
 
 // Task gets the currently active Task
-func Task(database *gorm.DB) (progress.Task, error) {
+func Task(database *gorm.DB, includeInactive bool) (progress.Task, error) {
 	var task progress.Task
 
-	if err := QueryTask(database, "", false).First(&task).Error; err != nil {
+	if err := QueryTask(database, "", includeInactive).First(&task).Error; err != nil { // {{{}}}
 		return task, err
 	}
 
@@ -41,7 +41,7 @@ func FormatTask(task progress.Task, verbose bool) string {
 	result := fmt.Sprintf("[%v]\t%v", task.Project.Abbreviation, task.Topic)
 
 	for _, tag := range task.Tags {
-		result = fmt.Sprintf("%v @%v", result, tag.Name)
+		result = fmt.Sprintf("%v @%v", result, tag.ID)
 	}
 
 	if verbose && strings.Trim(task.Description, whitespace) != "" {
