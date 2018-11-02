@@ -10,8 +10,8 @@ import (
 
 // Model is the base model that we define everything under
 type Model struct {
-	CreatedAt *time.Time `gorm:"not null;default:NOW"`
-	UpdatedAt *time.Time `gorm:"not null;default:NOW"`
+	CreatedAt *time.Time `gorm:"not null"`
+	UpdatedAt *time.Time `gorm:"not null"`
 	DeletedAt *time.Time `gorm:"default:NULL"`
 }
 
@@ -65,6 +65,10 @@ func EnsureSchema(database *gorm.DB) {
 func (instance *Model) BeforeSave() {
 	currentTime := time.Now()
 	instance.UpdatedAt = &currentTime
+
+	if instance.CreatedAt == nil {
+		instance.CreatedAt = &currentTime
+	}
 }
 
 // BeforeSave gets called before objects are saved

@@ -24,6 +24,10 @@ func abbreviationFlag(flagSet *flag.FlagSet, abbreviation *string, initial strin
 func CommandLine(options progress.Options, database *gorm.DB) *cobra.Command {
 	var all bool
 	var abbreviation string
+	var verbose bool
+
+	// Special abbreviation for the `project create` use-case
+	var projectCreateAbbreviation string
 
 	projects := &cobra.Command{
 		Use:   "project",
@@ -46,11 +50,11 @@ func CommandLine(options progress.Options, database *gorm.DB) *cobra.Command {
 		Args:  cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			name := strings.Join(args, " ")
-			panicIfSet(ProjectCreate(database, name, abbreviation))
+			panicIfSet(ProjectCreate(database, name, projectCreateAbbreviation))
 		},
 	}
 
-	abbreviationFlag(projectCreate.PersistentFlags(), &abbreviation, options.DefaultProject)
+	abbreviationFlag(projectCreate.PersistentFlags(), &projectCreateAbbreviation, "")
 
 	projects.AddCommand(projectList)
 	projects.AddCommand(projectCreate)
@@ -111,11 +115,15 @@ func CommandLine(options progress.Options, database *gorm.DB) *cobra.Command {
 	cli := &cobra.Command{
 		Use:   "prg",
 		Short: "A simple SQL-based task management interfae",
-		Run:   func(cmd *cobra.Command, args []string) {},
+		PersistentPreRun: func(cmd *cobra.Command, args []string) {
+			database.LogMode(verbose)
+		},
 	}
 
 	cli.AddCommand(projects)
 	cli.AddCommand(tasks)
+
+	cli.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "enable verbose output")
 
 	return cli
 }
