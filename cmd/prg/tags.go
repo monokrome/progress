@@ -28,6 +28,10 @@ func FormatTag(tag progress.Tag) string {
 
 // TaskTag changes attachment of tags to tasks
 func TaskTag(database *gorm.DB, shouldDetach bool, value string) error {
+	if len(value) > 0 && value[0] == '@' {
+		value = value[1:]
+	}
+
 	tag, err := Tag(database, value)
 
 	if err != nil {
