@@ -1,5 +1,5 @@
 PREFIX   ?= /usr/local
-BIN_PATH ?= bin/
+BIN_PATH ?= bin
 
 target=$(BIN_PATH)/prg
 
@@ -18,7 +18,7 @@ clean:
 .PHONY: clean
 
 
-$(BIN_PATH)prg: $(wildcard cmd/prg/*.go)
+$(BIN_PATH)/prg: $(wildcard cmd/prg/*.go)
 	mkdir -p $(@D)
 	go build -o $@ -i $^
 	cd $(dir $<) && go install ./...
