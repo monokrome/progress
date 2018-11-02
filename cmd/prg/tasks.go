@@ -18,11 +18,11 @@ func QueryTask(database *gorm.DB, abbreviation string, deleted bool) *gorm.DB {
 		query = query.Where("project_abbreviation = ?", abbreviation)
 	}
 
-	if deleted != true {
-		query = query.Where("deleted_at IS ?", nil)
+	if deleted == true {
+		query = query.Unscoped()
 	}
 
-	return query.Order("project_abbreviation ASC, updated_at DESC, created_at DESC")
+	return query.Order("updated_at DESC, created_at DESC")
 }
 
 // Task gets the currently active Task
@@ -55,7 +55,7 @@ func FormatTask(task progress.Task, verbose bool) string {
 func TaskActive(database *gorm.DB, abbreviation string) error {
 	var task progress.Task
 
-	if err := QueryTask(database, abbreviation, false).First(&task).Error; err != nil {
+	if err := QueryTask(database, "", false).First(&task).Error; err != nil {
 		return err
 	}
 
